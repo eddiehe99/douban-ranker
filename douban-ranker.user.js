@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         豆瓣榜单助手 · Douban-Ranker  
 // @namespace    https://github.com/eddiehe99/douban-ranker
-// @updateURL       https://raw.githubusercontent.com/eddiehe99/douban-ranker/refs/heads/main/douban-ranker.user.js
-// @downloadURL     https://raw.githubusercontent.com/eddiehe99/douban-ranker/refs/heads/main/douban-ranker.user.js
+// @updateURL       https://raw.githubusercontent.com/eddiehe99/douban-ranker/main/douban-ranker.user.js
+// @downloadURL     https://raw.githubusercontent.com/eddiehe99/douban-ranker/main/douban-ranker.user.js
 // @version      0.1
 // @description  在豆瓣电影页面展示电影在不同榜单中的排名
 // @author       Eddie He
