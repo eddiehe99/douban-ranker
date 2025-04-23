@@ -1,11 +1,14 @@
 // ==UserScript==
 // @name         豆瓣榜单助手 · Douban-Ranker  
 // @namespace    https://github.com/eddiehe99/douban-ranker
+// @homepageURL       https://github.com/eddiehe99/douban-ranker
+// @supportURL        https://github.com/eddiehe99/douban-ranker/issues
 // @updateURL       https://raw.githubusercontent.com/eddiehe99/douban-ranker/refs/heads/main/douban-ranker.user.js
 // @downloadURL     https://raw.githubusercontent.com/eddiehe99/douban-ranker/refs/heads/main/douban-ranker.user.js
-// @version      0.1
+// @version      0.1.1
 // @description  在豆瓣电影页面展示电影在不同榜单中的排名
 // @author       Eddie He
+// @contributor    CRonaldoWei
 // @match        https://movie.douban.com/subject/*
 // @connect        *
 // @grant          GM_xmlhttpRequest
@@ -17,8 +20,6 @@
 // @grant          GM_deleteValue
 // @grant          GM_registerMenuCommand
 // @grant          GM_getResourceText
-// @require        https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js
-// @require        https://greasyfork.org/scripts/368137-encodeToGb2312/code/encodeToGb2312.js?version=601683
 // @include        https://movie.douban.com/*
 // @include        https://music.douban.com/*
 // @include        https://book.douban.com/*
@@ -26,6 +27,8 @@
 
 (function () {
     'use strict';
+
+    console.log("脚本: 豆瓣榜单助手 · Douban-Ranker --- 开始执行 --- GitHub: https://github.com/eddiehe99/douban-ranker");
 
     // 获取当前豆瓣电影页面的电影 ID
     const url = window.location.href;
@@ -53,7 +56,7 @@
                 if (document.querySelector('link[href*="top250.css"]') === null) {
                     const cssLink = document.createElement('link');
                     cssLink.rel = 'stylesheet';
-                    cssLink.href = 'https://img1.doubanio.com/cuphead/movie-static/charts/top250.24c18.css'; // 替换为实际路径
+                    cssLink.href = 'https://img1.doubanio.com/cuphead/movie-static/charts/top250.24c18.css';
                     document.head.appendChild(cssLink);
                 }
 
