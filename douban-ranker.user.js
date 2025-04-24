@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         豆瓣榜单助手 · Douban-Ranker  
+// @name         豆瓣榜单助手 · Douban-Ranker
 // @namespace    https://github.com/eddiehe99/douban-ranker
 // @homepageURL       https://github.com/eddiehe99/douban-ranker
 // @supportURL        https://github.com/eddiehe99/douban-ranker/issues
