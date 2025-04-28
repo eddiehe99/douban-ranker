@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         豆瓣榜单助手 · Douban-Ranker
 // @namespace    https://github.com/eddiehe99/douban-ranker
-// @homepageURL  https://github.com/eddiehe99/douban-ranker
+// @homepageURL  https://douban-ranker.eddiehe.top
 // @supportURL   https://github.com/eddiehe99/douban-ranker/issues
-// @updateURL    https://raw.githubusercontent.com/eddiehe99/douban-ranker/refs/heads/main/douban-ranker.user.js
-// @downloadURL  https://raw.githubusercontent.com/eddiehe99/douban-ranker/refs/heads/main/douban-ranker.user.js
-// @version      0.2.0
+// @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
+// @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
+// @version      0.2.1
 // @description  在豆瓣电影和播客页面展示电影在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
@@ -147,7 +147,7 @@
                             </span>
                             <span class="top250-link">
                                 <a href="${foundPodcast.links[0].url}" title="中文播客榜">
-                                    xyzrank
+                                    中文播客榜
                                 </a>
                             </span>
                         </div>
