@@ -5,7 +5,7 @@
 // @supportURL   https://github.com/eddiehe99/douban-ranker/issues
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
-// @version      0.2.1
+// @version      0.2.2
 // @description  在豆瓣电影和播客页面展示电影在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
@@ -53,18 +53,23 @@
                     let list_num = top_list.list[douban_id];
                     if (list_num) {
                         let list_order = top_list.top;
-                        insert_html_list[list_order] = `
-                        <div class="top250">
-                            <span class="top250-no">
-                                ${top_list.prefix ? top_list.prefix : "No."}${list_num}
-                            </span>
-                            <span class="top250-link">
-                                <a href="${top_list.href}" title="${top_list.title}">
-                                    ${top_list.short_title}
-                                </a>
-                            </span>
-                        </div>
-                        `;
+                        insert_html_list[list_order] = [
+                            '<div class="top250">',
+                            '<span class="top250-no">',
+                            top_list.prefix ? top_list.prefix : 'No.',
+                            list_num,
+                            '</span>',
+                            '<span class="top250-link">',
+                            '<a',
+                            ' href="', top_list.href, '"',
+                            ' title="', top_list.title, '"',
+                            ' target="_blank"',
+                            '>',
+                            top_list.short_title,
+                            '</a>',
+                            '</span>',
+                            '</div>'
+                        ].join('');
                     }
                 }
                 if (insert_html_list.length > 0) {
@@ -77,11 +82,11 @@
                     }
 
                     // 插入 HTML
-                    insert_html_list.push(`
-                        <div style="display: none;" id='rank_toggle' data-toggle='show'>
-                            <a href="javascript::">展示剩余 →</a>
-                        </div>
-                    `);
+                    insert_html_list.push([
+                        '<div style="display: none;" id="rank_toggle" data-toggle="show">',
+                        '<a href="javascript:void(0)">展示剩余 →</a>',
+                        '</div>'
+                    ].join(''));
                     const after = document.querySelector("#content > h1");
                     if (after) {
                         after.insertAdjacentHTML('beforebegin', insert_html_list.join(' '));
@@ -116,7 +121,7 @@
         });
     }
     // 检查当前页面是否为 www.douban.com/podcast 页面
-    else if (location.host === "www.douban.com" && location.pathname === "/podcast") {
+    else if (location.host === "www.douban.com" && location.pathname.startsWith("/podcast")) {
         // 获取当前豆瓣播客页面的播客名称
         // <div id="wrapper">
         //     <div id="content">
@@ -140,18 +145,18 @@
                 );
 
                 if (foundPodcast) {
-                    insert_html_list[0] = `
-                        <div class="top250">
-                            <span class="top250-no">
-                                No.${foundPodcast.rank}
-                            </span>
-                            <span class="top250-link">
-                                <a href="${foundPodcast.links[0].url}" title="中文播客榜">
-                                    中文播客榜
-                                </a>
-                            </span>
-                        </div>
-                    `;
+                    insert_html_list[0] = [
+                        '<div class="top250">',
+                        '<span class="top250-no">',
+                        `No.${foundPodcast.rank}`,
+                        '</span>',
+                        '<span class="top250-link">',
+                        `<a href="${foundPodcast.links[0].url}" title="中文播客榜">`,
+                        '中文播客榜',
+                        '</a>',
+                        '</span>',
+                        '</div>'
+                    ].join('');
                 }
 
                 if (insert_html_list.length > 0) {
@@ -164,11 +169,11 @@
                     }
 
                     // 插入 HTML
-                    insert_html_list.push(`
-                        <div style="display: none;" id='rank_toggle' data-toggle='show'>
-                            <a href="javascript::">展示剩余 →</a>
-                        </div>
-                    `);
+                    insert_html_list.push([
+                        '<div style="display: none;" id="rank_toggle" data-toggle="show">',
+                        '<a href="javascript:void(0)">展示剩余 →</a>',
+                        '</div>'
+                    ].join(''));
                     const after = document.querySelector("#content > h1");
                     if (after) {
                         after.insertAdjacentHTML('beforebegin', insert_html_list.join(' '));
