@@ -103,11 +103,11 @@
                                 if (toggleState === 'show') {
                                     topSelector.forEach(item => item.style.display = "inline-block");
                                     this.setAttribute('data-toggle', 'hide');
-                                    this.innerHTML = '<a href="javascript::">隐藏剩余 ←</a>';
+                                    this.innerHTML = '<a href="javascript:void(0)">隐藏剩余 ←</a>';
                                 } else {
                                     Array.from(topSelector).slice(4).forEach(item => item.style.display = "none");
                                     this.setAttribute('data-toggle', 'show');
-                                    this.innerHTML = '<a href="javascript::">展示剩余 →</a>';
+                                    this.innerHTML = '<a href="javascript:void(0)">展示剩余 →</a>';
                                 }
                             });
                         }
@@ -151,7 +151,11 @@
                         `No.${foundPodcast.rank}`,
                         '</span>',
                         '<span class="top250-link">',
-                        `<a href="${foundPodcast.links[0].url}" title="中文播客榜">`,
+                        '<a',
+                        ' href="', `${foundPodcast.links[0].url}`, '"',
+                        ' title="', '中文播客榜', '"',
+                        ' target="_blank"',
+                        '>',
                         '中文播客榜',
                         '</a>',
                         '</span>',
