@@ -1,4 +1,4 @@
-# 豆瓣榜单助手 · Douban-Ranker
+# 豆瓣榜单助手·Douban-Ranker
 
 📊 为你的豆瓣电影和播客自动生成**多榜单排名**。
 
@@ -47,4 +47,4 @@
 
 ## Acknowledgement（感谢）
 
-本项目构建过程中，借助了 [紫东太初](https://taichu-web.ia.ac.cn/#/chat)、[商量](https://chat.sensetime.com/)、[腾讯元宝](https://yuanbao.tencent.com/)、[DeepSeek](https://chat.deepseek.com/) 等 LLM 的帮助。
+本项目构建过程中，借助了 [紫东太初](https://taichu-web.ia.ac.cn/#/chat)、[商量](https://chat.sensetime.com/)、[通义](https://www.tongyi.com/)、[腾讯元宝](https://yuanbao.tencent.com/)、[DeepSeek](https://chat.deepseek.com/) 等 LLM 的帮助。

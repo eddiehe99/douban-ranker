@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name         豆瓣榜单助手 · Douban-Ranker
+// @name         豆瓣榜单助手·Douban-Ranker
 // @namespace    https://github.com/eddiehe99/douban-ranker
 // @homepageURL  https://douban-ranker.eddiehe.top
 // @supportURL   https://github.com/eddiehe99/douban-ranker/issues
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
-// @version      0.2.3
-// @description  在豆瓣电影和播客页面展示电影在不同榜单中的排名
+// @version      0.2.4
+// @description  在豆瓣电影和播客页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
 // @icon         https://img3.doubanio.com/favicon.ico
@@ -18,174 +18,197 @@
 // @include      https://www.douban.com/podcast/*
 // @connect      *
 // @grant        GM_xmlhttpRequest
-// @grant        GM_setClipboard
 // @grant        GM_addStyle
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_listValues
-// @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
-// @grant        GM_getResourceText
 // ==/UserScript==
 
-(function () {
+(() => {
     'use strict';
 
-    console.log("脚本: 豆瓣榜单助手 · Douban-Ranker --- 开始执行 --- GitHub: https://github.com/eddiehe99/douban-ranker");
+    console.log("脚本: 豆瓣榜单助手·Douban-Ranker--开始执行--GitHub: https://github.com/eddiehe99/douban-ranker");
 
-    // 检查当前页面是否为豆瓣电影页面
-    if (location.host === "movie.douban.com") {
-        // 获取当前豆瓣电影页面的电影 ID
-        const url = window.location.href;
-        const dbidMatch = url.match(/https:\/\/movie.douban.com\/subject\/(\d+)/);
-        if (!dbidMatch) return;
-        const douban_id = dbidMatch[1];
+    // 配置常量
+    const CONFIG = {
+        movieRankUrl: "https://rank4douban.eddiehe.top/data.json",
+        podcastRankUrl: "https://xyzrank.eddiehe.top/full.json",
+        cssUrl: "https://img1.doubanio.com/cuphead/movie-static/charts/top250.24c18.css",
+        toggleButtonId: "rank_toggle",
+        top250Class: "top250"
+    };
 
-        // 从远程 JSON 加载榜单数据
+    // 添加样式
+    if (!document.querySelector(`link[href*="${CONFIG.cssUrl}"]`)) {
+        const styleLink = document.createElement('link');
+        styleLink.rel = 'stylesheet';
+        styleLink.href = CONFIG.cssUrl;
+        document.head.appendChild(styleLink);
+    }
+
+    /**
+     * 创建排名组件
+     * @param {Object} options 
+     * @param {string} options.prefix 前缀（如"TOP"）
+     * @param {number} options.position 排名位置
+     * @param {string} options.title 榜单标题
+     * @param {string} options.shortTitle 简短标题
+     * @param {string} options.href 榜单链接
+     * @returns {string} HTML字符串
+     */
+    function createRankItem({ prefix = 'No.', position, title, shortTitle, href }) {
+        return [
+            `<div class="${CONFIG.top250Class}" style="display: inline-block;">`,
+            `<span class="top250-no">${prefix}${position}</span>`,
+            `<span class="top250-link">`,
+            `<a href="${href}" title="${title}" target="_blank">${shortTitle}</a>`,
+            `</span>`,
+            `</div> `,
+        ].join('');
+    }
+
+    /**
+     * 初始化展示逻辑
+     * @param {HTMLElement} container 插入位置
+     * @param {Array<string>} items 排名组件数组
+     */
+    function initToggle(container, items) {
+        // 添加样式
+        if (!document.querySelector(`link[href*="${CONFIG.cssUrl}"]`)) {
+            const styleLink = document.createElement('link');
+            styleLink.rel = 'stylesheet';
+            styleLink.href = CONFIG.cssUrl;
+            document.head.appendChild(styleLink);
+        }
+
+        // 将 HTML 字符串转换为真实的 DOM 节点
+        const fragment = document.createDocumentFragment();
+        items.forEach(html => {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            tempDiv.style.display = "inline-block";
+            fragment.appendChild(tempDiv.firstElementChild); // 取出真正的 div.top250 元素
+            const space = document.createTextNode(' ');
+            fragment.appendChild(space);
+        });
+
+        // 在 container 之前插入 fragment
+        container.parentNode.insertBefore(fragment, container);
+
+        // 折叠逻辑
+        const allItems = document.querySelectorAll(`.${CONFIG.top250Class}`);
+        if (allItems.length > 4) {
+            // 创建折叠按钮
+            const toggleBtn = document.createElement('div');
+            toggleBtn.id = CONFIG.toggleButtonId;
+            toggleBtn.innerHTML = '<a href="javascript:void(0)">展示剩余 →</a>';
+            toggleBtn.setAttribute('data-toggle', 'show');
+            toggleBtn.style.display = 'inline-block';
+
+            // 在 container 之前插入 toggleBtn
+            container.parentNode.insertBefore(toggleBtn, container);
+
+            Array.from(allItems).slice(4).forEach(item => item.style.display = 'none');
+
+            // 点击按钮切换显示/隐藏
+            toggleBtn.addEventListener('click', function () {
+                const toggleState = this.getAttribute('data-toggle');
+                if (toggleState === 'show') {
+                    Array.from(allItems).slice(4).forEach(item => item.style.display = "inline-block");
+                    this.setAttribute('data-toggle', 'hide');
+                    this.innerHTML = '<a href="javascript:void(0)">隐藏剩余 ←</a>';
+                } else {
+                    Array.from(allItems).slice(4).forEach(item => item.style.display = "none");
+                    this.setAttribute('data-toggle', 'show');
+                    this.innerHTML = '<a href="javascript:void(0)">展示剩余 →</a>';
+                }
+            });
+        }
+    }
+
+    /**
+     * 处理电影页面
+     */
+    function handleMoviePage() {
+        const matchResult = window.location.href.match(/https:\/\/movie\.douban\.com\/subject\/(\d+)/);
+        if (!matchResult) return;
+
+        const doubanId = matchResult[1];
+        const header = document.querySelector("#content > h1");
+        if (!header) return;
+
         GM_xmlhttpRequest({
             method: 'GET',
-            url: "https://rank4douban.eddiehe.top/data.json",
+            url: CONFIG.movieRankUrl,
             onload: function (response) {
-                let rank_json = JSON.parse(response.responseText);
-                let insert_html_list = [];
-                for (let i in rank_json) {
-                    let top_list = rank_json[i];
-                    let list_num = top_list.list[douban_id];
-                    if (list_num) {
-                        let list_order = top_list.top;
-                        insert_html_list[list_order] = [
-                            '<div class="top250">',
-                            '<span class="top250-no">',
-                            top_list.prefix ? top_list.prefix : 'No.',
-                            list_num,
-                            '</span>',
-                            '<span class="top250-link">',
-                            '<a',
-                            ' href="', top_list.href, '"',
-                            ' title="', top_list.title, '"',
-                            ' target="_blank"',
-                            '>',
-                            top_list.short_title,
-                            '</a>',
-                            '</span>',
-                            '</div>'
-                        ].join('');
-                    }
-                }
-                if (insert_html_list.length > 0) {
-                    // 加载样式
-                    if (document.querySelector('link[href*="top250.css"]') === null) {
-                        const cssLink = document.createElement('link');
-                        cssLink.rel = 'stylesheet';
-                        cssLink.href = 'https://img1.doubanio.com/cuphead/movie-static/charts/top250.24c18.css';
-                        document.head.appendChild(cssLink);
-                    }
+                try {
+                    const data = JSON.parse(response.responseText);
+                    const lists = Object.values(data);
+                    const rankItems = lists
+                        .filter(list => list.list[doubanId])
+                        .map(list => ({
+                            prefix: list.prefix || 'No.',
+                            position: list.list[doubanId],
+                            title: list.title,
+                            shortTitle: list.short_title,
+                            href: list.href
+                        }))
+                        .map(createRankItem);
 
-                    // 插入 HTML
-                    insert_html_list.push([
-                        '<div style="display: none;" id="rank_toggle" data-toggle="show">',
-                        '<a href="javascript:void(0)">展示剩余 →</a>',
-                        '</div>'
-                    ].join(''));
-                    const after = document.querySelector("#content > h1");
-                    if (after) {
-                        after.insertAdjacentHTML('beforebegin', insert_html_list.join(' '));
-
-                        // 展示/隐藏逻辑
-                        const topSelector = document.querySelectorAll(".top250");
-                        topSelector.forEach(item => item.style.display = "inline-block");
-                        if (topSelector.length > 4) {
-                            Array.from(topSelector).slice(4).forEach(item => item.style.display = "none");
-                            const toggleButton = document.getElementById('rank_toggle');
-                            toggleButton.style.display = "inline-block";
-                            toggleButton.addEventListener('click', function () {
-                                const toggleState = this.getAttribute('data-toggle');
-                                if (toggleState === 'show') {
-                                    topSelector.forEach(item => item.style.display = "inline-block");
-                                    this.setAttribute('data-toggle', 'hide');
-                                    this.innerHTML = '<a href="javascript:void(0)">隐藏剩余 ←</a>';
-                                } else {
-                                    Array.from(topSelector).slice(4).forEach(item => item.style.display = "none");
-                                    this.setAttribute('data-toggle', 'show');
-                                    this.innerHTML = '<a href="javascript:void(0)">展示剩余 →</a>';
-                                }
-                            });
-                        }
-                    }
+                    if (rankItems.length) initToggle(header, rankItems);
+                } catch (e) {
+                    console.error("【豆瓣榜单助手·Douban-Ranker】电影榜单数据处理失败:", e);
+                    alert("豆瓣榜单助手·Douban-Ranker：电影榜单数据处理时发生错误，请稍后再试！");
                 }
             },
             onerror: function (error) {
-                console.error("Failed to load rank data:", error);
-                alert("无法加载榜单信息，请稍后再试！");
+                console.error("【豆瓣榜单助手·Douban-Ranker】电影榜单网络请求失败:", error);
+                alert("豆瓣榜单助手 · Douban-Ranker：电影榜单网络请求时发生错误，请检查您的网络连接后重试！");
             }
         });
     }
-    // 检查当前页面是否为 www.douban.com/podcast 页面
-    else if (location.host === "www.douban.com" && location.pathname.startsWith("/podcast")) {
-        // 获取当前豆瓣播客页面的播客名称
-        // <div id="wrapper">
-        //     <div id="content">
-        //         <h1>枫言枫语播客</h1>
-        //         ...
-        //     </div>
-        // </div>
-        const after = document.querySelector("#content > h1");
-        const podcast_name = after.innerText;
 
-        // 从远程 JSON 加载榜单数据
+    /**
+     * 处理播客页面
+     */
+    function handlePodcastPage() {
+        const header = document.querySelector("#content > h1");
+        if (!header) return;
+
+        const podcastName = header.innerText.trim();
         GM_xmlhttpRequest({
             method: 'GET',
-            url: "https://xyzrank.eddiehe.top/full.json",
+            url: CONFIG.podcastRankUrl,
             onload: function (response) {
-                let rank_json = JSON.parse(response.responseText);
-                let insert_html_list = [];
+                try {
+                    const data = JSON.parse(response.responseText);
+                    const podcast = data.data?.podcasts?.find(p => p.name === podcastName);
 
-                const foundPodcast = rank_json.data.podcasts.find(
-                    podcast => podcast.name === podcast_name
-                );
-
-                if (foundPodcast) {
-                    insert_html_list[0] = [
-                        '<div class="top250">',
-                        '<span class="top250-no">',
-                        `No.${foundPodcast.rank}`,
-                        '</span>',
-                        '<span class="top250-link">',
-                        '<a',
-                        ' href="', `${foundPodcast.links[0].url}`, '"',
-                        ' title="', '中文播客榜', '"',
-                        ' target="_blank"',
-                        '>',
-                        '中文播客榜',
-                        '</a>',
-                        '</span>',
-                        '</div>'
-                    ].join('');
-                }
-
-                if (insert_html_list.length > 0) {
-                    // 加载样式
-                    if (document.querySelector('link[href*="top250.css"]') === null) {
-                        const cssLink = document.createElement('link');
-                        cssLink.rel = 'stylesheet';
-                        cssLink.href = 'https://img1.doubanio.com/cuphead/movie-static/charts/top250.24c18.css';
-                        document.head.appendChild(cssLink);
+                    if (podcast && podcast.rank) {
+                        const item = createRankItem({
+                            position: podcast.rank,
+                            shortTitle: '中文播客榜',
+                            href: podcast.links[0]?.url || '#'
+                        });
+                        initToggle(header, [item]);
                     }
-
-                    // 插入 HTML
-                    insert_html_list.push([
-                        '<div style="display: none;" id="rank_toggle" data-toggle="show">',
-                        '<a href="javascript:void(0)">展示剩余 →</a>',
-                        '</div>'
-                    ].join(''));
-                    const after = document.querySelector("#content > h1");
-                    if (after) {
-                        after.insertAdjacentHTML('beforebegin', insert_html_list.join(' '));
-                    }
+                } catch (e) {
+                    console.error("【豆瓣榜单助手·Douban-Ranker】播客榜单数据处理失败:", e);
+                    alert("豆瓣榜单助手·Douban-Ranker：播客榜单数据处理时发生错误，请稍后再试！");
                 }
-
+            },
+            onerror: function (error) {
+                console.error("【豆瓣榜单助手·Douban-Ranker】播客榜单网络请求失败:", error);
+                alert("豆瓣榜单助手·Douban-Ranker：播客榜单网络请求时发生错误，请检查您的网络连接后重试！");
             }
         });
     }
 
+    // 页面适配入口
+    switch (location.host) {
+        case 'movie.douban.com':
+            handleMoviePage();
+            break;
+        case 'www.douban.com':
+            if (location.pathname.startsWith('/podcast')) handlePodcastPage();
+            break;
+    }
 })();
