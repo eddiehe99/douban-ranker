@@ -55,7 +55,7 @@
 
     /**
      * 创建排名组件
-     * @param {Object} options 
+     * @param {Object} options
      * @param {string} options.prefix 前缀（如"TOP"）
      * @param {number} options.position 排名位置
      * @param {string} options.title 榜单标题
@@ -107,7 +107,7 @@
 
         // 折叠逻辑
         const allItems = document.querySelectorAll(`.${CONFIG.top250Class}`);
-        allItems.forEach(item => item.style.display = "inline-block");
+        allItems.forEach(item => { item.style.display = "inline-block" });
 
         if (allItems.length > 4) {
             // 创建折叠按钮
@@ -120,17 +120,17 @@
             // 在 container 之前插入 toggleBtn
             container.parentNode.insertBefore(toggleBtn, container);
 
-            Array.from(allItems).slice(4).forEach(item => item.style.display = 'none');
+            Array.from(allItems).slice(4).forEach(item => { item.style.display = 'none' });
 
             // 点击按钮切换显示/隐藏
             toggleBtn.addEventListener('click', function () {
                 const toggleState = this.getAttribute('data-toggle');
                 if (toggleState === 'show') {
-                    Array.from(allItems).slice(4).forEach(item => item.style.display = "inline-block");
+                    Array.from(allItems).slice(4).forEach(item => { item.style.display = "inline-block" });
                     this.setAttribute('data-toggle', 'hide');
                     this.innerHTML = '<a href="javascript:void(0)">隐藏剩余 ←</a>';
                 } else {
-                    Array.from(allItems).slice(4).forEach(item => item.style.display = "none");
+                    Array.from(allItems).slice(4).forEach(item => { item.style.display = "none" });
                     this.setAttribute('data-toggle', 'show');
                     this.innerHTML = '<a href="javascript:void(0)">展示剩余 →</a>';
                 }
