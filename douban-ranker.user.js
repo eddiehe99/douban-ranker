@@ -5,7 +5,7 @@
 // @supportURL   https://github.com/eddiehe99/douban-ranker/issues
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
-// @version      0.3.1
+// @version      0.3.2
 // @description  在豆瓣电影和播客页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
@@ -68,7 +68,7 @@
             `<div class="${CONFIG.top250Class}" style="display: inline-block;">`,
             `<span class="top250-no">${prefix}${position}</span>`,
             `<span class="top250-link">`,
-            `<a href="${href}" title="${title}" "target="_blank">${shortTitle}</a>`,
+            `<a href="${href}" title="${title}" target="_blank">${shortTitle}</a>`,
             `</span>`,
             `</div> `,
         ].join('');
@@ -107,6 +107,8 @@
 
         // 折叠逻辑
         const allItems = document.querySelectorAll(`.${CONFIG.top250Class}`);
+        allItems.forEach(item => item.style.display = "inline-block");
+
         if (allItems.length > 4) {
             // 创建折叠按钮
             const toggleBtn = document.createElement('div');
