@@ -47,4 +47,4 @@
 
 ## Acknowledgement（感谢）
 
-本项目构建过程中，借助了 [紫东太初](https://taichu-web.ia.ac.cn/#/chat)、[商量](https://chat.sensetime.com/)、[通义](https://www.tongyi.com/)、[腾讯元宝](https://yuanbao.tencent.com/)、[DeepSeek](https://chat.deepseek.com/) 等 LLM 的帮助。
+本项目构建过程中，借助了 [紫东太初](https://taichu-web.ia.ac.cn/#/chat)、[商量](https://chat.sensetime.com/)、[通义](https://www.tongyi.com/)、[腾讯元宝](https://yuanbao.tencent.com/)、[DeepSeek](https://chat.deepseek.com/)、[Kimi](https://kimi.moonshot.cn)、[豆包](www.doubao.com) 等 LLM 的帮助。

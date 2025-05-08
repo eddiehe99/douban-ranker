@@ -5,7 +5,7 @@
 // @supportURL   https://github.com/eddiehe99/douban-ranker/issues
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
-// @version      0.2.4
+// @version      0.3.0
 // @description  在豆瓣电影和播客页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
@@ -36,12 +36,22 @@
         top250Class: "top250"
     };
 
-    // 添加样式
-    if (!document.querySelector(`link[href*="${CONFIG.cssUrl}"]`)) {
-        const styleLink = document.createElement('link');
-        styleLink.rel = 'stylesheet';
-        styleLink.href = CONFIG.cssUrl;
-        document.head.appendChild(styleLink);
+    // 缓存样式是否已加载
+    let isStyleInjected = false;
+
+    /**
+     * 注入外部 CSS 样式表
+     */
+    function injectStylesheet() {
+        if (isStyleInjected) return;
+        const existingLink = document.querySelector(`link[href*="${CONFIG.cssUrl}"]`);
+        if (!existingLink) {
+            const styleLink = document.createElement('link');
+            styleLink.rel = 'stylesheet';
+            styleLink.href = CONFIG.cssUrl;
+            document.head.appendChild(styleLink);
+        }
+        isStyleInjected = true;
     }
 
     /**
@@ -59,10 +69,21 @@
             `<div class="${CONFIG.top250Class}" style="display: inline-block;">`,
             `<span class="top250-no">${prefix}${position}</span>`,
             `<span class="top250-link">`,
-            `<a href="${href}" title="${title}" target="_blank">${shortTitle}</a>`,
+            `<a href="${href}" title="${title}" "target="_blank">${shortTitle}</a>`,
             `</span>`,
             `</div> `,
         ].join('');
+    }
+
+    /**
+     * 移除指定链接的 loading 占位元素
+     */
+    function removeProcessingItem(href) {
+        const items = document.querySelectorAll(`.${CONFIG.top250Class} a[href="${href}"]`);
+        items.forEach(item => {
+            const parent = item.closest(`.${CONFIG.top250Class}`);
+            if (parent) parent.remove();
+        });
     }
 
     /**
@@ -70,15 +91,7 @@
      * @param {HTMLElement} container 插入位置
      * @param {Array<string>} items 排名组件数组
      */
-    function initToggle(container, items) {
-        // 添加样式
-        if (!document.querySelector(`link[href*="${CONFIG.cssUrl}"]`)) {
-            const styleLink = document.createElement('link');
-            styleLink.rel = 'stylesheet';
-            styleLink.href = CONFIG.cssUrl;
-            document.head.appendChild(styleLink);
-        }
-
+    function renderRankListWithToggle(container, items) {
         // 将 HTML 字符串转换为真实的 DOM 节点
         const fragment = document.createDocumentFragment();
         items.forEach(html => {
@@ -135,6 +148,16 @@
         const header = document.querySelector("#content > h1");
         if (!header) return;
 
+        const processingStatusItem = createRankItem({
+            position: '...',
+            title: 'rank4douban',
+            shortTitle: '处理中',
+            href: 'https://rank4douban.eddiehe.top/'
+        });
+
+        injectStylesheet();
+        renderRankListWithToggle(header, [processingStatusItem]);
+
         GM_xmlhttpRequest({
             method: 'GET',
             url: CONFIG.movieRankUrl,
@@ -153,7 +176,12 @@
                         }))
                         .map(createRankItem);
 
-                    if (rankItems.length) initToggle(header, rankItems);
+                    // remove processing status item
+                    removeProcessingItem("https://rank4douban.eddiehe.top/");
+
+                    if (rankItems.length > 0) {
+                        renderRankListWithToggle(header, rankItems);
+                    }
                 } catch (e) {
                     console.error("【豆瓣榜单助手·Douban-Ranker】电影榜单数据处理失败:", e);
                     alert("豆瓣榜单助手·Douban-Ranker：电影榜单数据处理时发生错误，请稍后再试！");
@@ -174,6 +202,17 @@
         if (!header) return;
 
         const podcastName = header.innerText.trim();
+
+        const processingStatusItem = createRankItem({
+            position: '...',
+            title: '中文播客榜',
+            shortTitle: '处理中',
+            href: 'https://xyzrank.eddiehe.top/'
+        });
+
+        injectStylesheet();
+        renderRankListWithToggle(header, [processingStatusItem]);
+
         GM_xmlhttpRequest({
             method: 'GET',
             url: CONFIG.podcastRankUrl,
@@ -182,13 +221,17 @@
                     const data = JSON.parse(response.responseText);
                     const podcast = data.data?.podcasts?.find(p => p.name === podcastName);
 
+                    // remove processing status item
+                    removeProcessingItem("https://xyzrank.eddiehe.top/");
+
                     if (podcast && podcast.rank) {
                         const item = createRankItem({
                             position: podcast.rank,
+                            title: '中文播客榜',
                             shortTitle: '中文播客榜',
                             href: podcast.links[0]?.url || '#'
                         });
-                        initToggle(header, [item]);
+                        renderRankListWithToggle(header, [item]);
                     }
                 } catch (e) {
                     console.error("【豆瓣榜单助手·Douban-Ranker】播客榜单数据处理失败:", e);
