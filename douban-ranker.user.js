@@ -5,13 +5,14 @@
 // @supportURL   https://github.com/eddiehe99/douban-ranker/issues
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
-// @version      0.3.3
-// @description  在豆瓣电影和播客页面展示作品在不同榜单中的排名
+// @version      0.4.0
+// @description  在豆瓣电影、播客、音乐页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
 // @icon         https://img3.doubanio.com/favicon.ico
 // @match        https://movie.douban.com/subject/*
 // @match        https://www.douban.com/podcast/*
+// @match        https://music.douban.com/subject/*
 // @include      https://movie.douban.com/*
 // @include      https://music.douban.com/*
 // @include      https://book.douban.com/*
@@ -30,27 +31,46 @@
     const CONFIG = {
         movieRankUrl: "https://rank4douban.eddiehe.top/data.json",
         podcastRankUrl: "https://xyzrank.eddiehe.top/full.json",
-        cssUrl: "https://img1.doubanio.com/cuphead/movie-static/charts/top250.24c18.css",
+        musicRankUrl: "https://hma.eddiehe.top/data.json",
+        top250Class: "top250",
+        top250CssUrl: "https://img1.doubanio.com/cuphead/movie-static/charts/top250.24c18.css",
         toggleButtonId: "rank_toggle",
-        top250Class: "top250"
+        rankLabelClass: "rank-label rank-label-other",
+        rankLabelCssUrl: "https://img1.doubanio.com/cuphead/movie-static/subject/rank_label.dda40.css"
     };
 
     // 缓存样式是否已加载
-    let isStyleInjected = false;
+    let isTop250StyleInjected = false;
+    let isRankLabelStyleInjected = false;
 
     /**
-     * 注入外部 CSS 样式表
+     * 注入外部 Top 250 CSS 样式表
      */
-    function injectStylesheet() {
-        if (isStyleInjected) return;
-        const existingLink = document.querySelector(`link[href*="${CONFIG.cssUrl}"]`);
+    function injectTop250Stylesheet() {
+        if (isTop250StyleInjected) return;
+        const existingLink = document.querySelector(`link[href*="${CONFIG.top250CssUrl}"]`);
         if (!existingLink) {
             const styleLink = document.createElement('link');
             styleLink.rel = 'stylesheet';
-            styleLink.href = CONFIG.cssUrl;
+            styleLink.href = CONFIG.top250CssUrl;
             document.head.appendChild(styleLink);
         }
-        isStyleInjected = true;
+        isTop250StyleInjected = true;
+    }
+
+    /**
+     * 注入外部 Rank Label CSS 样式表
+     */
+    function injectRankLabelStylesheet() {
+        if (isRankLabelStyleInjected) return;
+        const existingLink = document.querySelector(`link[href*="${CONFIG.rankLabelCssUrl}"]`);
+        if (!existingLink) {
+            const styleLink = document.createElement('link');
+            styleLink.rel = 'stylesheet';
+            styleLink.href = CONFIG.rankLabelCssUrl;
+            document.head.appendChild(styleLink);
+        }
+        isRankLabelStyleInjected = true;
     }
 
     /**
@@ -63,7 +83,7 @@
      * @param {string} options.href 榜单链接
      * @returns {string} HTML字符串
      */
-    function createRankItem({ prefix = 'No.', position, title, shortTitle, href }) {
+    function createTop250RankItem({ prefix = 'No.', position, title, shortTitle, href }) {
         return [
             `<div class="${CONFIG.top250Class}" style="display: inline-block;">`,
             `<span class="top250-no">${prefix}${position}</span>`,
@@ -86,6 +106,31 @@
     }
 
     /**
+ * 创建排名组件
+ * @param {Object} options
+ * @param {string} options.prefix 前缀（如"TOP"）
+ * @param {number} options.position 排名位置
+ * @param {string} options.title 榜单标题
+ * @param {string} options.shortTitle 简短标题
+ * @param {string} options.href 榜单链接
+ * @returns {string} HTML字符串
+ */
+    function createRankLabelRankItem({ prefix = 'No.', position, title, shortTitle, href }) {
+        return [
+            `<div class="rank-label rank-label-other" style="display: inline-block;">`,
+            `::before`,
+            `<span class="rank-label-no">`,
+            `::before`,
+            `<span>${prefix}${position}</span>`,
+            `</span>`,
+            `<span class="rank-label-link">`,
+            `<a href="${href}" title="${title}" target="_blank">${shortTitle}</a>`,
+            `</span>`,
+            `</div> `,
+        ].join('');
+    }
+
+    /**
      * 初始化展示逻辑
      * @param {HTMLElement} container 插入位置
      * @param {Array<string>} items 排名组件数组
@@ -97,7 +142,7 @@
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
             tempDiv.style.display = "inline-block";
-            fragment.appendChild(tempDiv.firstElementChild); // 取出真正的 div.top250 元素
+            fragment.appendChild(tempDiv.firstElementChild); // 取出真正的 div 元素
             const space = document.createTextNode(' ');
             fragment.appendChild(space);
         });
@@ -106,7 +151,7 @@
         container.parentNode.insertBefore(fragment, container);
 
         // 折叠逻辑
-        const allItems = document.querySelectorAll(`.${CONFIG.top250Class}`);
+        const allItems = document.querySelectorAll(`.${CONFIG.top250Class}, .${CONFIG.rankLabelClass}`);
         allItems.forEach(item => { item.style.display = "inline-block" });
 
         if (allItems.length > 4) {
@@ -149,14 +194,14 @@
         const header = document.querySelector("#content > h1");
         if (!header) return;
 
-        const processingStatusItem = createRankItem({
+        const processingStatusItem = createTop250RankItem({
             position: '...',
             title: 'rank4douban',
             shortTitle: '处理中',
             href: 'https://rank4douban.eddiehe.top/'
         });
 
-        injectStylesheet();
+        injectTop250Stylesheet();
         renderRankListWithToggle(header, [processingStatusItem]);
 
         GM_xmlhttpRequest({
@@ -175,7 +220,7 @@
                             shortTitle: list.short_title,
                             href: list.href
                         }))
-                        .map(createRankItem);
+                        .map(createTop250RankItem);
 
                     // remove processing status item
                     removeProcessingItem("https://rank4douban.eddiehe.top/");
@@ -204,14 +249,14 @@
 
         const podcastName = header.innerText.trim();
 
-        const processingStatusItem = createRankItem({
+        const processingStatusItem = createTop250RankItem({
             position: '...',
             title: '中文播客榜',
             shortTitle: '处理中',
             href: 'https://xyzrank.eddiehe.top/'
         });
 
-        injectStylesheet();
+        injectTop250Stylesheet();
         renderRankListWithToggle(header, [processingStatusItem]);
 
         GM_xmlhttpRequest({
@@ -226,7 +271,7 @@
                     removeProcessingItem("https://xyzrank.eddiehe.top/");
 
                     if (podcast && podcast.rank) {
-                        const item = createRankItem({
+                        const item = createTop250RankItem({
                             position: podcast.rank,
                             title: '中文播客榜',
                             shortTitle: '中文播客榜',
@@ -246,6 +291,77 @@
         });
     }
 
+
+    /**
+     * 处理音乐页面
+     */
+    function handleMusicPage() {
+        const header = document.querySelector("h1");
+        if (!header) return;
+
+        const albumName = header.textContent.trim();
+
+        const processingStatusItem = createTop250RankItem({
+            position: '...',
+            title: 'HOPICO MUSIC AWARD',
+            shortTitle: '处理中',
+            href: 'https://hma.eddiehe.top/'
+        });
+
+        injectTop250Stylesheet();
+        injectRankLabelStylesheet();
+        renderRankListWithToggle(header, [processingStatusItem]);
+
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: CONFIG.musicRankUrl,
+            onload: function (response) {
+                try {
+                    const data = JSON.parse(response.responseText);
+                    const rankItems = [];
+
+                    // 遍历所有届次 (HOPICO MUSIC AWARDS)
+                    Object.entries(data).forEach(([awardName, awardData]) => {
+                        if (!awardName.includes('HOPICO MUSIC AWARDS')) return;
+
+                        const categories = awardData.categories || {};
+
+                        // 检查所有奖项类别
+                        Object.entries(categories).forEach(([categoryKey, category]) => {
+                            const matchingAlbums = category.albums.filter(album =>
+                                album.name == albumName
+                            );
+
+                            matchingAlbums.forEach(album => {
+                                rankItems.push(createRankLabelRankItem({
+                                    prefix: '# ',
+                                    position: album.award,
+                                    title: category.title,
+                                    shortTitle: category.short_title,
+                                    href: awardData.href,
+                                }));
+                            });
+                        });
+                    });
+
+                    // remove processing status item
+                    removeProcessingItem("https://hma.eddiehe.top/");
+
+                    if (rankItems.length > 0) {
+                        renderRankListWithToggle(header, rankItems);
+                    }
+                } catch (e) {
+                    console.error("【豆瓣榜单助手·Douban-Ranker】音乐榜单数据处理失败:", e);
+                    alert("豆瓣榜单助手·Douban-Ranker：音乐榜单数据处理时发生错误，请稍后再试！");
+                }
+            },
+            onerror: function (error) {
+                console.error("【豆瓣榜单助手·Douban-Ranker】音乐榜单网络请求失败:", error);
+                alert("豆瓣榜单助手·Douban-Ranker：音乐榜单网络请求时发生错误，请检查您的网络连接后重试！");
+            }
+        });
+    }
+
     // 页面适配入口
     switch (location.host) {
         case 'movie.douban.com':
@@ -253,6 +369,9 @@
             break;
         case 'www.douban.com':
             if (location.pathname.startsWith('/podcast')) handlePodcastPage();
+            break;
+        case 'music.douban.com':
+            handleMusicPage();
             break;
     }
 })();
