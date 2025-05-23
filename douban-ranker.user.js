@@ -119,9 +119,7 @@
     function createRankLabelRankItem({ prefix = 'No.', position, title, shortTitle, href }) {
         return [
             `<div class="rank-label rank-label-other" style="display: inline-block;">`,
-            `::before`,
             `<span class="rank-label-no">`,
-            `::before`,
             `<span>${prefix}${position}</span>`,
             `</span>`,
             `<span class="rank-label-link">`,

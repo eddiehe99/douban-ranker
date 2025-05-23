@@ -6,6 +6,7 @@
 
 - 在豆瓣电影页面中，聚合 AFI/CC/TSPDT 等电影榜单
 - 在豆瓣播客页面中，展示 [中文播客榜](https://xyzrank.com/#/) 排名
+- 在豆瓣音乐页面中，展示 [HMA（HOPICO MUSIC AWARD）](https://space.bilibili.com/261485584/lists/3748867?type=series) 信息
 
 ### 豆瓣电影页面功能展示
 
@@ -31,9 +32,9 @@
 
 需要浏览器装有 [Tampermonkey](https://tampermonkey.net/) 或 [Violentmonkey](https://violentmonkey.github.io/) 插件.
 
-| 正式版 (eddiehe.top 源) | 正式版 (GitHub 源) |
-| --- | --- |
-| [安装（推荐）](https://douban-ranker.eddiehe.top/douban-ranker.user.js) | [安装](https://raw.githubusercontent.com/eddiehe99/douban-ranker/refs/heads/main/douban-ranker.user.js) |
+| eddiehe.top 源 | GitHub 源 | GreasyFork 源 |
+| --- | --- | --- |
+| [安装（推荐）](https://douban-ranker.eddiehe.top/douban-ranker.user.js) | [安装](https://raw.githubusercontent.com/eddiehe99/douban-ranker/refs/heads/main/douban-ranker.user.js) | [安装](https://greasyfork.org/en/scripts/536994-%E8%B1%86%E7%93%A3%E6%A6%9C%E5%8D%95%E5%8A%A9%E6%89%8B-douban-ranker) |
 
 ## 参考
 
