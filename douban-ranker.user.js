@@ -6,7 +6,7 @@
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @license      MIT
-// @version      0.4.1
+// @version      0.4.2
 // @description  在豆瓣电影、播客、音乐页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
