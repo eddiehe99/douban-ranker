@@ -1,6 +1,6 @@
 # 豆瓣榜单助手·Douban-Ranker
 
-📊 为你的豆瓣电影和播客自动生成**多榜单排名**。
+📊 为你的豆瓣电影、播客、音乐页面自动生成**多榜单排名**。
 
 ## 安装
 
@@ -36,6 +36,16 @@
 
     ![douban-podcast-with-script-off](images/douban-podcast-with-script-off.jpg)
 
+### 豆瓣音乐页面功能展示
+
+- 开启脚本：
+
+    ![douban-music-with-script-on](images/douban-music-with-script-on.jpg)
+
+- 关闭脚本：
+
+    ![douban-music-with-script-off](images/douban-music-with-script-off.jpg)
+
 ## 参考
 
 - [豆瓣资源下载大师](https://greasyfork.org/scripts/329484)
@@ -45,6 +55,7 @@
 
 - [rank4donban](https://github.com/eddiehe99/rank4douban)
 - [xyzrank](https://github.com/eddiehe99/xyzrank)
+- [hma](https://github.com/eddiehe99/hma)
 
 ## 贡献者
 
