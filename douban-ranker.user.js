@@ -6,7 +6,7 @@
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @license      MIT
-// @version      0.4.2
+// @version      0.4.3
 // @description  在豆瓣电影、播客、音乐页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
@@ -186,7 +186,7 @@
      * 处理电影页面
      */
     function handleMoviePage() {
-        const matchResult = window.location.href.match(/https:\/\/movie\.douban\.com\/subject\/(\d+)/);
+        const matchResult = window.location.href.match(/^https:\/\/movie\.douban\.com\/subject\/(\d+)\/?$/);
         if (!matchResult) return;
 
         const doubanId = matchResult[1];
