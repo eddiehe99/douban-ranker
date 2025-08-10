@@ -46,10 +46,11 @@
 
     ![douban-music-with-script-off](images/douban-music-with-script-off.jpg)
 
-## 参考
+## 参考及推荐
 
 - [豆瓣资源下载大师](https://greasyfork.org/scripts/329484)
 - [Bilibili-Evolved](https://github.com/the1812/Bilibili-Evolved)
+- 豆b番——豆瓣电影显示IMDb和烂番茄评分：[GitHub](https://github.com/f-is-h/douban-imdb-rt)、[GreasyFork](https://greasyfork.org/zh-CN/scripts/527823-%E8%B1%86%E7%93%A3%E7%94%B5%E5%BD%B1-imdb%E5%92%8C%E7%83%82%E7%95%AA%E8%8C%84%E8%AF%84%E5%88%86%E6%98%BE%E7%A4%BA)
 
 ## 数据来源
 
