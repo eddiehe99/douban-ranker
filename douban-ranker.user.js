@@ -1,16 +1,16 @@
 // ==UserScript==
-// @name         豆瓣榜单助手·Douban-Ranker
+// @name         dev-豆瓣榜单助手·Douban-Ranker
 // @namespace    https://github.com/eddiehe99/douban-ranker
 // @homepageURL  https://douban-ranker.eddiehe.top
 // @supportURL   https://github.com/eddiehe99/douban-ranker/issues
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @license      MIT
-// @version      0.4.3
+// @version      0.5.0
 // @description  在豆瓣电影、播客、音乐页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
-// @icon         https://img3.doubanio.com/favicon.ico
+// @icon         https://img1.doubanio.com/favicon.ico
 // @match        https://movie.douban.com/subject/*
 // @match        https://www.douban.com/podcast/*
 // @match        https://music.douban.com/subject/*
@@ -26,12 +26,13 @@
 (() => {
     'use strict';
 
-    console.log("脚本: 豆瓣榜单助手·Douban-Ranker--开始执行--GitHub: https://github.com/eddiehe99/douban-ranker");
+    console.log("脚本: 开始执行--GitHub: https://github.com/eddiehe99/douban-ranker");
 
     // 配置常量
     const CONFIG = {
         movieRankUrl: "https://rank4douban.eddiehe.top/data.json",
-        podcastRankUrl: "https://xyzrank.eddiehe.top/full.json",
+        podcastApiUrl: "https://xyzrank.com/api/podcasts",
+        podcastPageLimit: 50,
         musicRankUrl: "https://hma.eddiehe.top/data.json",
         top250Class: "top250",
         top250CssUrl: "https://img1.doubanio.com/cuphead/movie-static/charts/top250.24c18.css",
@@ -240,7 +241,7 @@
     }
 
     /**
-     * 处理播客页面
+     * 处理播客页面 — 分页请求 xyzrank.com/api/podcasts
      */
     function handlePodcastPage() {
         const header = document.querySelector("#content > h1");
@@ -252,42 +253,70 @@
             position: '...',
             title: '中文播客榜',
             shortTitle: '处理中',
-            href: 'https://xyzrank.eddiehe.top/'
+            href: 'https://xyzrank.com/'
         });
 
         injectTop250Stylesheet();
         renderRankListWithToggle(header, [processingStatusItem]);
 
-        GM_xmlhttpRequest({
-            method: 'GET',
-            url: CONFIG.podcastRankUrl,
-            onload: function (response) {
-                try {
-                    const data = JSON.parse(response.responseText);
-                    const podcast = data.data?.podcasts?.find(p => p.name === podcastName);
+        // ---- 分页请求 ----
+        let foundPodcast = null;
 
-                    // remove processing status item
-                    removeProcessingItem("https://xyzrank.eddiehe.top/");
+        function fetchPage(offset) {
+            const url = `${CONFIG.podcastApiUrl}?offset=${offset}&limit=${CONFIG.podcastPageLimit}`;
 
-                    if (podcast && podcast.rank) {
-                        const item = createTop250RankItem({
-                            position: podcast.rank,
-                            title: '中文播客榜',
-                            shortTitle: '中文播客榜',
-                            href: podcast.links[0]?.url || '#'
-                        });
-                        renderRankListWithToggle(header, [item]);
+            GM_xmlhttpRequest({
+                method: 'GET',
+                url: url,
+                onload: function (response) {
+                    try {
+                        const data = JSON.parse(response.responseText);
+
+                        const podcasts = data.items || [];
+
+                        // 在当前页查找播客 (items[i].name === podcastName)
+                        const match = podcasts.find(p => p.name === podcastName);
+                        if (match) {
+                            foundPodcast = match;
+                        }
+
+                        // 判断是否结束: 找到播客 或 本页不足 CONFIG.podcastPageLimit 条（已到最后一页）
+                        if (foundPodcast || podcasts.length < CONFIG.podcastPageLimit) {
+
+                            // remove processing status item
+                            removeProcessingItem("https://xyzrank.com/");
+
+                            if (foundPodcast && foundPodcast.rank) {
+                                const item = createTop250RankItem({
+                                    position: foundPodcast.rank,
+                                    title: '中文播客榜',
+                                    shortTitle: '中文播客榜',
+                                    href: foundPodcast.links?.[0]?.url || '#'
+                                });
+                                renderRankListWithToggle(header, [item]);
+                            } else {
+                                console.warn("【豆瓣榜单助手·Douban-Ranker】播客 \"" + podcastName + "\" 未在榜单中找到（已遍历所有页）");
+                            }
+                        } else {
+                            // 继续请求下一页
+                            fetchPage(offset + CONFIG.podcastPageLimit);
+                        }
+                    } catch (e) {
+                        console.error("【豆瓣榜单助手·Douban-Ranker】播客榜单数据处理失败:", e);
+                        removeProcessingItem("https://xyzrank.com/");
+                        alert("豆瓣榜单助手·Douban-Ranker：播客榜单数据处理时发生错误，请稍后再试！");
                     }
-                } catch (e) {
-                    console.error("【豆瓣榜单助手·Douban-Ranker】播客榜单数据处理失败:", e);
-                    alert("豆瓣榜单助手·Douban-Ranker：播客榜单数据处理时发生错误，请稍后再试！");
+                },
+                onerror: function (error) {
+                    console.error("【豆瓣榜单助手·Douban-Ranker】播客榜单网络请求失败:", error);
+                    removeProcessingItem("https://xyzrank.com/");
+                    alert("豆瓣榜单助手·Douban-Ranker：播客榜单网络请求时发生错误，请检查您的网络连接后重试！");
                 }
-            },
-            onerror: function (error) {
-                console.error("【豆瓣榜单助手·Douban-Ranker】播客榜单网络请求失败:", error);
-                alert("豆瓣榜单助手·Douban-Ranker：播客榜单网络请求时发生错误，请检查您的网络连接后重试！");
-            }
-        });
+            });
+        }
+
+        // 从第一页开始请求
+        fetchPage(0);
     }
 
 
