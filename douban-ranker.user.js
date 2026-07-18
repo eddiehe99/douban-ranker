@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name         dev-豆瓣榜单助手·Douban-Ranker
+// @name         豆瓣榜单助手·Douban-Ranker
 // @namespace    https://github.com/eddiehe99/douban-ranker
 // @homepageURL  https://douban-ranker.eddiehe.top
 // @supportURL   https://github.com/eddiehe99/douban-ranker/issues
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @license      MIT
-// @version      0.5.0
+// @version      0.5.1
 // @description  在豆瓣电影、播客、音乐页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
