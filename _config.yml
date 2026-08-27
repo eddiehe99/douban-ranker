@@ -1,0 +1,75 @@
+# 站点基础信息：title/description 会写入 <title> 与 meta description，
+# 影响 SEO 和社交分享摘要。description 支持 >- 折叠多行文本。
+title: 豆瓣榜单助手·Douban-Ranker
+description: >-
+  为您的豆瓣电影、播客、音乐页面自动生成多榜单排名：
+  聚合 AFI/CC/TSPDT 等电影榜单、展示中文播客榜排名与 HMA 音乐奖项信息。
+lang: zh-CN
+
+# 页面时区，影响构建时间戳相关输出
+timezone: Asia/Shanghai
+
+# 地址配置：用于 canonical / og:url 等标签的生成，
+# 必须与 CNAME 保持一致，且不带末尾斜杠。
+# baseurl 仅当站点部署在子路径时才需要设置；当前是域名根路径，故留空。
+url: "https://douban-ranker.eddiehe.top"
+baseurl: ""
+
+# 作者信息：jekyll-seo-tag 会读取并生成对应的 meta 标签
+author:
+  name: Eddie He
+  url: "https://github.com/eddiehe99"
+
+# 社交账号：可选项，会生成 Twitter Card 相关 meta 标签，不需要可整段删除
+github_username: eddiehe99
+twitter_username: eddiehe99
+
+# 许可信息：部分主题会在页面底部展示，不影响 SEO
+license: MIT
+license_url: "https://github.com/eddiehe99/douban-ranker/blob/main/LICENSE"
+
+# SEO 插件：均为 GitHub Pages 白名单插件，直接启用即可，无需安装依赖。
+# jekyll-seo-tag  → 自动生成 meta 描述 / Open Graph / Twitter Card / JSON-LD 结构化数据
+# jekyll-sitemap  → 自动生成 sitemap.xml，利于搜索引擎收录
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# tagline：部分主题会显示在标题下方
+tagline: 让豆瓣页面自带权威榜单排名
+
+# keywords：SEO 关键词列表（分词用逗号即可）
+keywords: [豆瓣, Tampermonkey, 用户脚本, GreasyFork, 电影榜单, 播客排行]
+
+# og:image 社交分享卡片图：建议使用独立的 1200×630 图片效果最佳
+image: images/douban-movie-with-script-on.jpg
+
+# 页面级默认值：为首页（README.md）统一注入元数据，
+# 这样无需在 README.md 里写 YAML front matter。
+# 注意：请确认主题提供了名为 default 的 layout，否则删掉这一行。
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+      keywords: 豆瓣, Tampermonkey, 用户脚本, 电影榜单, 播客排行
+
+# 主题配置：
+# 未显式设置 theme 时，GitHub Pages 默认使用 jekyll-theme-primer
+# GitHub Pages theme: https://github.com/pages-themes
+theme: jekyll-theme-time-machine
+
+# Markdown 构建行为
+markdown: kramdown
+kramdown:
+  # 使用 GitHub Flavored Markdown（表格、删除线等语法）
+  input: GFM
+
+# highlighter 是代码高亮引擎，Pages 默认即为 rouge，显式写出便于日后调整
+highlighter: rouge
+
+# 重要：绝不要把 douban-ranker.user.js / douban-ranker.archive.user.js /
+# images/ 加入下面的 exclude —— 安装链接需要它们能通过站点直接访问。
+exclude:
+  - LICENSE
+  - tencent4625978937202788984.txt
