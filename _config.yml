@@ -64,8 +64,11 @@ defaults:
       # 1. 建议后续换成专用的 1200×630 图片效果最佳
       # 2. alt 是 og:image:alt / twitter:image:alt 的内容，
       #    检测工具要求的"行动号召文案"写在这里，能提高分享图点击率
+      # 3. width/height 必须是图片的真实像素尺寸，平台可据此提前预留布局空间
       image:
         path: /images/douban-movie-with-script-on.jpg
+        width: 694
+        height: 397
         alt: 豆瓣榜单助手，在豆瓣电影、播客、音乐页面自动生成多榜单排名
 
 # 主题配置：
