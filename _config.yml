@@ -55,8 +55,12 @@ defaults:
       layout: default
       keywords: 豆瓣, Tampermonkey, 用户脚本, 电影榜单, 播客排行
       # 社交分享卡片图（og:image 与 twitter:image 共用）：
-      # 建议后续换成专用的 1200×630 图片效果最佳
-      image: /images/douban-movie-with-script-on.jpg
+      # 1. 建议后续换成专用的 1200×630 图片效果最佳
+      # 2. alt 是 og:image:alt / twitter:image:alt 的内容，
+      #    检测工具要求的"行动号召文案"写在这里，能提高分享图点击率
+      image:
+        path: /images/douban-movie-with-script-on.jpg
+        alt: 豆瓣榜单助手，在豆瓣电影、播客、音乐页面自动生成多榜单排名
 
 # 主题配置：
 # 未显式设置 theme 时，GitHub Pages 默认使用 jekyll-theme-primer
