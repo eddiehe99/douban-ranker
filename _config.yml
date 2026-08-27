@@ -41,18 +41,22 @@ tagline: 让豆瓣页面自带权威榜单排名
 # keywords：SEO 关键词列表（分词用逗号即可）
 keywords: [豆瓣, Tampermonkey, 用户脚本, GreasyFork, 电影榜单, 播客排行]
 
-# og:image 社交分享卡片图：建议使用独立的 1200×630 图片效果最佳
-image: images/douban-movie-with-script-on.jpg
-
 # 页面级默认值：为首页（README.md）统一注入元数据，
 # 这样无需在 README.md 里写 YAML front matter。
-# 注意：请确认主题提供了名为 default 的 layout，否则删掉这一行。
+# 注意：
+# 1. 请确认主题提供了名为 default 的 layout，否则删掉 layout 一行。
+# 2. jekyll-seo-tag 只读取页面层级的 image 字段（不读站点顶层配置），
+#    所以 og:image / twitter:image 必须通过 defaults 注入才能全局生效。
+# 3. 图片路径使用以 / 开头的根相对路径，确保与 url 拼接正确。
 defaults:
   - scope:
       path: ""
     values:
       layout: default
       keywords: 豆瓣, Tampermonkey, 用户脚本, 电影榜单, 播客排行
+      # 社交分享卡片图（og:image 与 twitter:image 共用）：
+      # 建议后续换成专用的 1200×630 图片效果最佳
+      image: /images/douban-movie-with-script-on.jpg
 
 # 主题配置：
 # 未显式设置 theme 时，GitHub Pages 默认使用 jekyll-theme-primer
