@@ -15,10 +15,13 @@ timezone: Asia/Shanghai
 url: "https://douban-ranker.eddiehe.top"
 baseurl: ""
 
-# 作者信息：jekyll-seo-tag 会读取并生成对应的 meta 标签
+# 作者信息：jekyll-seo-tag 会读取并生成对应的 meta 标签。
+# twitter 字段必须写，否则 seo-tag 会拿 name（含空格）当 handle 兜底，
+# 生成非法的 twitter:creator 值（如 "@Eddie He"）。
 author:
   name: Eddie He
   url: "https://github.com/eddiehe99"
+  twitter: eddiehe99
 
 # 社交账号：可选项，不需要可整段删除。
 # 注意：jekyll-seo-tag 生成 twitter:site / twitter:creator 标签时，

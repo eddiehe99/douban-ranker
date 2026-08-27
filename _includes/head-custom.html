@@ -6,7 +6,8 @@
 {% include head-custom-google-analytics.html %}
 
 <!-- 站点 favicon：
-    必须指向站点自己的实体文件（仓库根目录的 favicon.ico 会由
-    Jekyll 自动发布到 https://douban-ranker.eddiehe.top/favicon.ico）。
-    Google 搜索结果中的站点图标要求 favicon 存在于本站而非外链。 -->
-<link rel="icon" href="/favicon.ico" sizes="any">
+    必须指向站点自己的实体文件（仓库根目录的 favicon.ico 由 Jekyll 自动发布）。
+    absolute_url 会在构建时把路径展开成完整地址，兼容性最好。
+    按 opengraph.to 检测建议同时提供 .ico 与 .png 两种格式。 -->
+<link rel="icon" href="{{ '/favicon.ico' | absolute_url }}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ '/favicon-32x32.png' | absolute_url }}">
