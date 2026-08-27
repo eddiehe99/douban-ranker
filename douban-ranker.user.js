@@ -6,11 +6,11 @@
 // @updateURL    https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @downloadURL  https://douban-ranker.eddiehe.top/douban-ranker.user.js
 // @license      MIT
-// @version      0.5.1
+// @version      0.5.2
 // @description  在豆瓣电影、播客、音乐页面展示作品在不同榜单中的排名
 // @author       Eddie He
 // @contributor  CRonaldoWei
-// @icon         https://img1.doubanio.com/favicon.ico
+// @icon         https://www.douban.com/favicon.ico
 // @match        https://movie.douban.com/subject/*
 // @match        https://www.douban.com/podcast/*
 // @match        https://music.douban.com/subject/*
