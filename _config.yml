@@ -20,9 +20,12 @@ author:
   name: Eddie He
   url: "https://github.com/eddiehe99"
 
-# 社交账号：可选项，会生成 Twitter Card 相关 meta 标签，不需要可整段删除
+# 社交账号：可选项，不需要可整段删除。
+# 注意：jekyll-seo-tag 生成 twitter:site / twitter:creator 标签时，
+# 只读取下面这种嵌套形式（twitter.username），不认顶层的 twitter_username。
 github_username: eddiehe99
-twitter_username: eddiehe99
+twitter:
+  username: eddiehe99
 
 # 许可信息：部分主题会在页面底部展示，不影响 SEO
 license: MIT
